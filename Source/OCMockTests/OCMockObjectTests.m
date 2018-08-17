@@ -1170,6 +1170,45 @@ static NSString *TestNotification = @"TestNotification";
     XCTAssertTrue([end timeIntervalSinceDate:start] < 3, @"Should have returned before delay was up");
 }
 
+<<<<<<< HEAD
+=======
+
+- (void)testDoesNotReinitialiseMockWhenInitIsCalledMoreThanOnce
+{
+	mock = OCMClassMock([TestClassWithProperty class]);
+	OCMStub([mock alloc]).andReturn(mock);
+	OCMStub([mock title]).andReturn(@"foo");
+
+	TestClassWithProperty *object = [[TestClassWithProperty alloc] init];
+	XCTAssertEqualObjects(@"foo", object.title);
+}
+
+
+- (void)testClassArgsAreRetained
+{
+
+    id mockWithClassMethod = OCMClassMock([TestClassWithClassArgMethod class]);
+    @autoreleasepool {
+        [[mockWithClassMethod stub] doStuffWithClass:[OCMArg any]];
+    }
+    XCTAssertNoThrow([mockWithClassMethod doStuffWithClass:[NSString class]]);
+}
+
+
+- (void)testArgumentsGetReleasedAfterStopMocking
+{
+    __weak id weakArgument;
+    mock = OCMClassMock([TestClassWithProperty class]);
+    @autoreleasepool {
+        NSMutableString *title = [NSMutableString new];
+        weakArgument = title;
+        [mock setTitle:title];
+        [mock stopMocking];
+    }
+    XCTAssertNil(weakArgument);
+}
+
+>>>>>>> c030e6e... OCMockObject invocations retain arguments
 @end
 
 
